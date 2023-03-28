@@ -15,6 +15,22 @@ function Form(props) {
   const [id, setId] = useState(`retreat-${nanoid()}`);
 
   useEffect(() => {
+    // set initial state of form fields based on props.item
+    if (props.actionType === "edit") {
+      setName(props.retreatProp.name);
+      setAddress(props.retreatProp.address);
+      setMobile(props.retreatProp.mobile);
+      setDescription(props.retreatProp.description);
+      setLat(props.retreatProp.location.latitude);
+      setLng(props.retreatProp.location.longitude);
+      setImage(props.retreatProp.image);
+      setId(props.retreatProp.id);
+      setLocateManual(true);
+    }
+  }, []); // empty dependency array to run the effect only once
+
+  useEffect(() => {
+    // Reset all state after successful edit/addition
     if (isSuccess) {
       setName("");
       setAddress("");
@@ -56,18 +72,14 @@ function Form(props) {
   };
 
   const handleImageUpload = (e) => {
+    console.log("upload img",e.target.files[0])
     setImage(e.target.files[0]);
   };
 
   const geoFindMe = () => {
-    // console.log("geoFindMe",lastItem);
     function success(position) {
       setLat(position.coords.latitude);
       setLng(position.coords.longitude);
-      // const mapLink =  `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-      // console.log(mapLink)
-      // console.log(`Latitude: ${latitude}°, Longitude: ${longitude}°`);
-      // locateRetreat(lastItem,{latitude:latitude, longitude:longitude,});
     }
     function error() {
       console.log("Unable to retrieve your location");
@@ -83,6 +95,10 @@ function Form(props) {
   const canSave = [name, address, mobile, description, lat, lng, image].every(
     Boolean
   );
+
+  const handleDelete = (id) => {
+    props.removeRetreat(id);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -102,8 +118,15 @@ function Form(props) {
         },
         image,
       };
-      props.addRetreat(newItem);
-      setIsSuccess(true);
+      if (props.actionType === "add") {
+        console.log("Adding....");
+        props?.addRetreat(newItem);
+        setIsSuccess(true);
+      } else if (props.actionType === "edit") {
+        console.log("Updating....");
+        props?.updateRetreat(newItem);
+        setIsSuccess(true);
+      }
     }
   };
 
@@ -139,7 +162,6 @@ function Form(props) {
       </div>
     </>
   );
-
   const locationDisplayTemplate = (
     <>
       <div className="grid ">
@@ -168,6 +190,15 @@ function Form(props) {
         </span>
       </div>
     </>
+  );
+
+  const deleteButton = (
+    <button
+      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 border border-red-700 rounded w-full m-2"
+      onClick={() => handleDelete(props.retreatProp.id)}
+    >
+      Delete
+    </button>
   );
 
   return (
@@ -277,8 +308,14 @@ function Form(props) {
         type="submit"
         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 border border-green-700 rounded w-full m-2"
       >
-        Add
+        {props.actionType === "edit"
+          ? "Update"
+          : props.actionType === "add"
+          ? "Add"
+          : ""}
       </button>
+
+      {props.actionType === "edit" ? deleteButton : null}
     </form>
   );
 }

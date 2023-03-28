@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GetPhotoSrc } from "./db";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,22 +7,24 @@ import {
   faLocationPin,
   faBook,
 } from "@fortawesome/free-solid-svg-icons";
-
-
+import EditModal from "./components/EditModal";
+import { RetreatContext } from "./context/RetreatContext";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import markerIconPng from "leaflet/dist/images/marker-icon.png"
-import {Icon} from 'leaflet'
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Icon } from "leaflet";
 
 const Retreats = () => {
   const retreatID = useParams();
+  const { retreats, setRetreats } = useContext(RetreatContext);
   const navigate = useNavigate();
+  const [isEdited, setIsEdited] = useState(false);
 
-  const retreats = JSON.parse(localStorage.getItem("retreats")) || [];
-  console.log(retreats);
-  console.log(retreatID);
+
+  // console.log(retreats);
+  // console.log(retreatID);
   const retreat = retreats.find((rt) => rt.id === retreatID.id);
-  console.log(retreat);
+  // console.log(retreat);
 
   function DisplayPhoto({ id }) {
     console.log(id);
@@ -36,11 +38,22 @@ const Retreats = () => {
     );
   }
 
+  if (isEdited) {
+    return navigate("/");
+  }
+
   const content = (
     // <div className="w-full grid sm:grid-cols-1 md:grid-cols-3 gap-2">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto bg-white py-8 border-t border-gray-400"></div>
-
+      <EditModal
+        className="w-full"
+        title={"Edit Retreat"}
+        retreatProp={retreat}
+        retreatID={retreatID}
+        isEdited={isEdited}
+        setIsEdited={setIsEdited}
+      ></EditModal>
       <div className="w-full h-full bg-white rounded-2xl m-2 text-gray-500">
         <div className="h-64">
           <DisplayPhoto id={retreatID.id} />
@@ -77,7 +90,7 @@ const Retreats = () => {
               center={[retreat.location.latitude, retreat.location.longitude]}
               zoom={13}
               scrollWheelZoom={false}
-              className="w-full h-full"
+              className="w-full h-full z-0"
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               <Marker
@@ -85,7 +98,13 @@ const Retreats = () => {
                   retreat.location.latitude,
                   retreat.location.longitude,
                 ]}
-                icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
+                icon={
+                  new Icon({
+                    iconUrl: markerIconPng,
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                  })
+                }
               >
                 <Popup>{retreat.name}</Popup>
               </Marker>

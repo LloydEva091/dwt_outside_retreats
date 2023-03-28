@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import NewModal from "./components/NewModal";
 import Card from "./components/Card";
-import { nanoid } from "nanoid";
+import { RetreatContext } from "./context/RetreatContext";
 
 function Home(props) {
-  const [retreats, setRetreats] = useState(props.retreats);
+  const { retreats, setRetreats } = useContext(RetreatContext);
   // State to track number of cards to display
   const [numCards, setNumCards] = useState(4); // Default to 4 for small screens
   const [numDisplayedCards, setNumDisplayedCards] = useState(numCards);
 
-  // Change local storage retreats when the state retreat is modify
-  useEffect(() => {
-    localStorage.setItem("retreats", JSON.stringify([...retreats]));
-  }, [retreats]);
-
+  console.log("all retreats",retreats)
   // Update number of cards to display based on screen size
   useEffect(() => {
     const handleResize = () => {
@@ -21,13 +17,13 @@ function Home(props) {
       let newNumCards;
       if (screenWidth < 640) {
         newNumCards = 4;
-        setNumDisplayedCards(4)
-      } else if  (screenWidth >= 640 ) {
+        setNumDisplayedCards(4);
+      } else if (screenWidth >= 640) {
         newNumCards = 9;
-        setNumDisplayedCards(9)
+        setNumDisplayedCards(9);
       } else {
         newNumCards = retreats.length;
-        setNumDisplayedCards(retreats.length)
+        setNumDisplayedCards(retreats.length);
       }
       // // if more cards are currently displayed than the new screen size allows,
       // // reduce the number of displayed cards to match the new screen size

@@ -4,16 +4,17 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-
-
+import { RetreatProvider } from "./context/RetreatContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/*" element={<App />} />
-    </Routes>
-  </BrowserRouter>
+  <RetreatProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/*" element={<App />} />
+      </Routes>
+    </BrowserRouter>
+  </RetreatProvider>
 );
 
 serviceWorkerRegistration.register();

@@ -5,7 +5,7 @@ import Home from "./Home";
 import Retreats from "./Retreats";
 import Layout from "./components/Layout";
 
-const DATA = JSON.parse(localStorage.getItem('retreats')) || []
+// const DATA = JSON.parse(localStorage.getItem('retreats')) || []
 // const DATA = JSON.parse(localStorage.getItem("tasks")) || [];
 
 const DATA2 = [
@@ -58,7 +58,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* Home Page */}
-        <Route index element={<Home retreats={DATA} />} />
+        <Route index element={<Home/>} />
 
         {/* Retreats Routes */}
         <Route path=":id">
