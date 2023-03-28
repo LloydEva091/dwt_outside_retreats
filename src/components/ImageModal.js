@@ -6,7 +6,7 @@ const ImageModal = (props) => {
   let [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
-//   console.log(props)
+  //   console.log(props)
   const content = (
     <>
       <button
@@ -45,14 +45,13 @@ const ImageModal = (props) => {
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    {/* {props.title} */}
-                  </Dialog.Title>
+                  ></Dialog.Title>
                   <div className="mt-2"></div>
-                    {/* {props.modalContent} */}
-                    <WebcamCapture id={props.id} setImage={props.setImage} image={props.image}>
-
-                    </WebcamCapture>
+                  <WebcamCapture
+                    id={props.id}
+                    setImage={props.setImage}
+                    image={props.image}
+                  ></WebcamCapture>
 
                   <div>
                     <button

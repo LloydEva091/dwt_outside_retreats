@@ -1,7 +1,7 @@
-import React, { Fragment, useState, useContext, useEffect } from "react";
+import React, { Fragment, useState, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Form from "./Form";
-import { addPhoto, updatePhoto, removePhoto } from "../db";
+import {  updatePhoto, removePhoto } from "../db";
 import { RetreatContext } from "../context/RetreatContext";
 
 const EditModal = (props) => {

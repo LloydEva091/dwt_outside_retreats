@@ -1,13 +1,22 @@
-import React from "react";
-import { Link, Element } from "react-scroll";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMountainCity } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { Link } from "react-scroll";
+import logo from "../img/outside-retreats-logo.png";
 
-const Header = () => {
-  const content = (
+function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
     <nav id="header" className="w-full z-30 top-0 py-1 sticky bg-white">
       <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-6 py-3">
-        <label htmlFor="menu-toggle" className="cursor-pointer md:hidden block">
+        <label
+          htmlFor="menu-toggle"
+          className="cursor-pointer md:hidden block"
+          onClick={toggleMenu}
+        >
           <svg
             className="fill-current text-gray-900"
             xmlns="http://www.w3.org/2000/svg"
@@ -19,10 +28,18 @@ const Header = () => {
             <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
           </svg>
         </label>
-        <input className="hidden" type="checkbox" id="menu-toggle" />
+        <input
+          className="hidden"
+          type="checkbox"
+          id="menu-toggle"
+          defaultChecked={isOpen}
+          // onChange={toggleMenu}
+        />
 
         <div
-          className="hidden md:flex md:items-center md:w-auto w-full order-3 md:order-1"
+          className={`${
+            isOpen ? "block" : "hidden"
+          } md:flex md:items-center md:w-auto w-full order-3 md:order-1`}
           id="menu"
         >
           <nav>
@@ -31,6 +48,7 @@ const Header = () => {
                 <a
                   className="inline-block no-underline hover:text-black hover:underline py-2 px-4"
                   href="/"
+                  onClick={toggleMenu}
                 >
                   Home
                 </a>
@@ -41,6 +59,7 @@ const Header = () => {
                   className="inline-block no-underline hover:text-black hover:underline py-2 px-4"
                   smooth={true}
                   duration={500}
+                  onClick={toggleMenu}
                 >
                   About
                 </Link>
@@ -54,15 +73,16 @@ const Header = () => {
             className="flex items-center tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl "
             href="/"
           >
-            <FontAwesomeIcon icon={faMountainCity} className="py-1 px-2" />
-            Outside Retreats
+            <img
+              src={logo}
+              className="w-20 md:w-48 md:h-24"
+              alt="outside-retreats-logo"
+            />
           </a>
         </div>
       </div>
     </nav>
   );
+}
 
-  return content;
-};
-
-export default Header;
+export default Navbar;
