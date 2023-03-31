@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-scroll";
 import logo from "../img/outside-retreats-logo.png";
+import { useNavigate } from "react-router-dom";
 
-function Navbar() {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  const goBackHome = () => {
+    navigate("/");
+  };
 
   return (
-    <nav id="header" className="w-full z-30 top-0 py-1 sticky bg-white">
+    <nav
+      id="header"
+      className="w-full z-10 top-0 py-1 sticky bg-white fontStyle"
+    >
       <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-6 py-3">
         <label
           htmlFor="menu-toggle"
@@ -33,7 +41,6 @@ function Navbar() {
           type="checkbox"
           id="menu-toggle"
           defaultChecked={isOpen}
-          // onChange={toggleMenu}
         />
 
         <div
@@ -43,15 +50,14 @@ function Navbar() {
           id="menu"
         >
           <nav>
-            <ul className="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0">
-              <li key="home">
-                <a
+            <ul className="md:flex items-center justify-between text-xl text-gray-700 pt-4 md:pt-0">
+              <li key="home" onClick={goBackHome}>
+                <div
                   className="inline-block no-underline hover:text-black hover:underline py-2 px-4"
-                  href="/"
                   onClick={toggleMenu}
                 >
                   Home
-                </a>
+                </div>
               </li>
               <li key="about">
                 <Link
@@ -69,20 +75,20 @@ function Navbar() {
         </div>
 
         <div className="order-1 md:order-1">
-          <a
+          <div
             className="flex items-center tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl "
-            href="/"
+            onClick={goBackHome}
           >
             <img
               src={logo}
               className="w-20 md:w-48 md:h-24"
               alt="outside-retreats-logo"
             />
-          </a>
+          </div>
         </div>
       </div>
     </nav>
   );
-}
+};
 
-export default Navbar;
+export default Header;

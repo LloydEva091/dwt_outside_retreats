@@ -1,62 +1,45 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { GetPhotoSrc } from "./db";
+import { RetreatContext } from "./context/RetreatContext";
+import ModalView from "./components/ModalView";
+import DisplayPhoto from "./components/DisplayPhoto";
+
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Icon } from "leaflet";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
   faLocationPin,
   faBook,
 } from "@fortawesome/free-solid-svg-icons";
-import EditModal from "./components/EditModal";
-import { RetreatContext } from "./context/RetreatContext";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
-import { Icon } from "leaflet";
 
 const Retreats = () => {
-  const retreatID = useParams();
-  const { retreats, setRetreats } = useContext(RetreatContext);
+  const retreatID = useParams(); // Take the retreat id
+  const { retreats } = useContext(RetreatContext); // Fetch all the retreats from context
   const navigate = useNavigate();
-  const [isEdited, setIsEdited] = useState(false);
 
-
-  // console.log(retreats);
-  // console.log(retreatID);
   const retreat = retreats.find((rt) => rt.id === retreatID.id);
-  // console.log(retreat);
-
-  function DisplayPhoto({ id }) {
-    console.log(id);
-    const imgSrc = GetPhotoSrc(id);
-    return (
-      <img
-        src={imgSrc}
-        alt={`Photo ${id}`}
-        className="rounded-t-2xl transform-translate-y-5  w-full h-full "
-      />
-    );
-  }
-
-  if (isEdited) {
+  // If there are no retreat return to home page
+  if (!retreat) {
     return navigate("/");
   }
 
   const content = (
-    // <div className="w-full grid sm:grid-cols-1 md:grid-cols-3 gap-2">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="container mx-auto bg-white py-8 border-t border-gray-400"></div>
-      <EditModal
+      <div className="container mx-auto bg-white py-1 border-t border-gray-400"></div>
+      <ModalView
         className="w-full"
-        title={"Edit Retreat"}
+        actionType={"edit"}
+        title={"EDIT RETREAT"}
         retreatProp={retreat}
         retreatID={retreatID}
-        isEdited={isEdited}
-        setIsEdited={setIsEdited}
-      ></EditModal>
+      ></ModalView>
       <div className="w-full h-full bg-white rounded-2xl m-2 text-gray-500">
         <div className="h-64">
-          <DisplayPhoto id={retreatID.id} />
+          <DisplayPhoto id={retreatID.id} heightImg={"h-full"} />
         </div>
 
         <div className="pt-3 flex items-center justify-between">
@@ -66,15 +49,15 @@ const Retreats = () => {
         </div>
         <div className="flex text-sm px-2 my-2">
           <div className="grid grid-rows-1">
-            <div className="w-full ">
-              <FontAwesomeIcon icon={faBook} className="py-1 px-2" />
+            <div className="w-full flex items-center">
+              <FontAwesomeIcon icon={faBook} className="px-2" />
               <span className="px-2">{retreat.description}</span>
             </div>
-            <div>
+            <div className="w-full flex items-center">
               <FontAwesomeIcon icon={faLocationPin} className="py-1 px-2" />
               <span className="px-2">{retreat.address}</span>
             </div>
-            <div>
+            <div className="w-full flex items-center">
               <FontAwesomeIcon icon={faPhone} className="py-1 px-2" />
               <span className="px-1">{retreat.mobile}</span>
             </div>

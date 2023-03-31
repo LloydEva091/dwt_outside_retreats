@@ -1,46 +1,40 @@
 import React, { useState, useEffect, useContext } from "react";
-import NewModal from "./components/NewModal";
 import Card from "./components/Card";
 import { RetreatContext } from "./context/RetreatContext";
+import ModalView from "./components/ModalView";
 
-function Home(props) {
-  const { retreats, setRetreats } = useContext(RetreatContext);
-  // State to track number of cards to display
-  const [numCards, setNumCards] = useState(4); // Default to 4 for small screens
-  const [numDisplayedCards, setNumDisplayedCards] = useState(numCards);
-
-  console.log("all retreats",retreats)
+function Home() {
+  // Retrieve retreats from the RetreatContext
+  const { retreats } = useContext(RetreatContext);
+  const [numDisplayedCards, setNumDisplayedCards] = useState(4); // Default to 4 for small screens
   // Update number of cards to display based on screen size
+  // Re-run effect when retreats array changes
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
-      let newNumCards;
       if (screenWidth < 640) {
-        newNumCards = 4;
         setNumDisplayedCards(4);
       } else if (screenWidth >= 640) {
-        newNumCards = 9;
         setNumDisplayedCards(9);
       } else {
-        newNumCards = retreats.length;
         setNumDisplayedCards(retreats.length);
       }
-      // // if more cards are currently displayed than the new screen size allows,
-      // // reduce the number of displayed cards to match the new screen size
-      // if (newNumCards < numCards) {
-      //   setNumCards(newNumCards);
-      // }
     };
+    // Listen for resize events
     window.addEventListener("resize", handleResize);
+    // Call the function immediately to set initial state
     handleResize();
+    // Clean up by removing the event listener
     return () => window.removeEventListener("resize", handleResize);
   }, [retreats]);
 
+  // Show a "Show More" button if there are more retreats than displayed cards
   const showMoreButton = retreats.length > numDisplayedCards && (
     <div className="text-center">
       <button
-        className="bg-teal-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 transition duration-1000 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+        className="bg-teal-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 mb-2 transition duration-1000 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         onClick={() => {
+          // Increase number of displayed cards by 4, or set to remaining cards if less than 4
           setNumDisplayedCards(numDisplayedCards + 4);
           if (numDisplayedCards + 4 >= retreats.length) {
             setNumDisplayedCards(retreats.length);
@@ -52,8 +46,9 @@ function Home(props) {
     </div>
   );
 
+  // Create a list of Card components for each retreat
   const retreatsList = retreats
-    ?.slice(0, numDisplayedCards)
+    ?.slice(0, numDisplayedCards) // Only show the first numDisplayedCards retreats
     .map((retreat) => (
       <Card
         id={retreat.id}
@@ -69,18 +64,21 @@ function Home(props) {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto bg-white py-1 border-t border-gray-400"></div>
-      <NewModal
-        className="w-full"
-        title={"New Retreat"}
-        setNewItem={setRetreats}
-        item={retreats}
-      ></NewModal>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-2">
-          {retreatsList}
+        {/* Line Break */}
+        <div className="container mx-auto bg-white py-1 border-t border-gray-400"></div>
+        <ModalView
+          className="w-full"
+          title={"NEW RETREAT"}
+          actionType={"add"}
+        ></ModalView>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Display retreatsList in a grid, with 1 column on small screens and 3 columns on medium screens */}
+          <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+            {retreatsList}
+          </div>
+          {showMoreButton}
         </div>
-        {showMoreButton}
       </div>
     </div>
   );

@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
-import ImageModal from "./ImageModal";
+import React, { useState, useEffect, useContext } from "react";
 import { nanoid } from "nanoid";
+import { RetreatContext } from "../context/RetreatContext";
+import ModalView from "./ModalView";
+import WebcamCapture from "./WebcamCapture";
+import { useNavigate } from "react-router-dom";
 
 function Form(props) {
+  const { addRetreat, updateRetreat, removeRetreat } =
+    useContext(RetreatContext);
+  const [isEdited, setIsEdited] = useState(false);
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [mobile, setMobile] = useState("");
@@ -39,8 +46,13 @@ function Form(props) {
       setLat("");
       setLng("");
       props.closeModal();
+      if (props.actionType === "edit") setIsEdited(true);
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isEdited) navigate("/");
+  }, [isEdited]);
 
   const handleNameChanged = (e) => {
     setName(e.target.value);
@@ -72,7 +84,7 @@ function Form(props) {
   };
 
   const handleImageUpload = (e) => {
-    console.log("upload img",e.target.files[0])
+    console.log("upload img", e.target.files[0]);
     setImage(e.target.files[0]);
   };
 
@@ -96,15 +108,20 @@ function Form(props) {
     Boolean
   );
 
-  const handleDelete = (id) => {
-    props.removeRetreat(id);
+  const handleDelete = async (id) => {
+    try {
+      await removeRetreat(id);
+      setIsSuccess(true);
+      console.log(isSuccess);
+      return true;
+    } catch (error) {
+      console.error("Error deleting retreat:", error);
+      return false;
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!name.trim()) {
-    //   return;
-    // }
     if (canSave) {
       const newItem = {
         id,
@@ -118,14 +135,21 @@ function Form(props) {
         },
         image,
       };
-      if (props.actionType === "add") {
-        console.log("Adding....");
-        props?.addRetreat(newItem);
-        setIsSuccess(true);
-      } else if (props.actionType === "edit") {
-        console.log("Updating....");
-        props?.updateRetreat(newItem);
-        setIsSuccess(true);
+      try {
+        if (props.actionType === "add") {
+          console.log("Adding....");
+          await addRetreat(newItem);
+          setIsSuccess(true);
+          return true;
+        } else if (props.actionType === "edit") {
+          console.log("Updating....");
+          await updateRetreat(newItem);
+          setIsSuccess(true);
+          return true;
+        }
+      } catch (error) {
+        console.error("Error submitting form", error);
+        return false;
       }
     }
   };
@@ -139,7 +163,7 @@ function Form(props) {
         <input
           type="text"
           id="retreat-latitude"
-          className="m-2 w-full rounded-xl py-2 px-2 text-black"
+          className="mt-2 w-full rounded-xl py-2 px-2 text-black"
           name="text"
           autoComplete="off"
           value={lat}
@@ -152,7 +176,7 @@ function Form(props) {
         <input
           type="text"
           id="retreat-longitude"
-          className="m-2 w-full rounded-xl py-2 px-2 text-black"
+          className="mt-2 w-full rounded-xl py-2 px-2 text-black"
           name="text"
           autoComplete="off"
           value={lng}
@@ -171,7 +195,7 @@ function Form(props) {
         <span
           type="text"
           id="retreat-latitude2"
-          className="m-2 w-full rounded-xl py-2 px-2 text-black bg-white"
+          className="mt-2 w-full rounded-xl py-2 px-2 text-black bg-white"
           value={lat}
         >
           {lat}
@@ -183,7 +207,7 @@ function Form(props) {
         <span
           type="text"
           id="retreat-longitude2"
-          className="m-2 w-full rounded-xl py-2 px-2 text-black bg-white"
+          className="mt-2 w-full rounded-xl py-2 px-2 text-black bg-white"
           value={lng}
         >
           {lng}
@@ -194,7 +218,7 @@ function Form(props) {
 
   const deleteButton = (
     <button
-      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 border border-red-700 rounded w-full m-2"
+      className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 border border-orange-700 rounded w-full mt-2"
       onClick={() => handleDelete(props.retreatProp.id)}
     >
       Delete
@@ -209,7 +233,7 @@ function Form(props) {
       <input
         type="text"
         id="retreat-name"
-        className="m-2 w-full rounded-xl py-2 px-2 text-black"
+        className="mt-2 w-full rounded-xl py-2 px-2 text-black"
         name="text"
         autoComplete="off"
         value={name}
@@ -222,7 +246,7 @@ function Form(props) {
       <input
         type="text"
         id="retreat-address"
-        className="m-2 w-full rounded-xl py-2 px-2 text-black"
+        className="mt-2 w-full rounded-xl py-2 px-2 text-black"
         name="text"
         autoComplete="off"
         value={address}
@@ -235,7 +259,7 @@ function Form(props) {
       <input
         type="number"
         id="retreat-mobile"
-        className="m-2 w-full rounded-xl py-2 px-2 text-black"
+        className="mt-2 w-full rounded-xl py-2 px-2 text-black"
         name="mobile"
         autoComplete="off"
         value={mobile}
@@ -253,7 +277,7 @@ function Form(props) {
         name="description"
         value={description}
         onChange={handleDescriptionChanged}
-        className={` text-black border border-black w-full rounded-xl py-2 px-2 m-2`}
+        className={` text-black border border-black w-full rounded-xl py-2 px-2 mt-2`}
         autoComplete="off"
       />
 
@@ -286,13 +310,19 @@ function Form(props) {
 
       {locateManual ? getLocationTemplate : locationDisplayTemplate}
       <div className="grid gap-2 sm:grid-cols-2 w-full ">
-        <ImageModal setImage={setImage} image={image} id={id}>
+        <ModalView
+          actionType={"camera"}
+          title={"Take Photo"}
+          setImage={setImage}
+          image={image}
+          id={id}
+        >
           Take Photo
-        </ImageModal>
+        </ModalView>
 
         <label
           htmlFor="retreat-upload"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 border border-blue-700 rounded w-full m-2 text-center"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 border border-blue-700 rounded w-full mr-2 mt-2 text-center"
         >
           Upload Photo
         </label>
@@ -306,7 +336,7 @@ function Form(props) {
 
       <button
         type="submit"
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 border border-green-700 rounded w-full m-2"
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 border border-green-700 rounded w-full mt-2"
       >
         {props.actionType === "edit"
           ? "Update"

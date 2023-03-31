@@ -11,6 +11,7 @@ const WebcamCapture = (props) => {
     if (photoSaved) {
       console.log("useEffect detected photoSaved");
       props.setImage(props.id, imgSrc); // call the setImage prop with the captured image
+      props?.closeModal();
     }
   }, [photoSaved]);
 
@@ -54,7 +55,7 @@ const WebcamCapture = (props) => {
         {!imgSrc && (
           <button
             type="button"
-            className="m-2 bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 border border-blue-700 rounded w-full"
+            className="mt-2 bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-2 border border-blue-700 rounded w-full items-center"
             onClick={capture}
           >
             Capture Photo
@@ -63,7 +64,7 @@ const WebcamCapture = (props) => {
         {imgSrc && (
           <button
             type="button"
-            className="m-2 bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 border border-blue-700 rounded w-full"
+            className="mt-2 bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-2 border border-green-700 rounded w-full items-center"
             onClick={savePhoto}
           >
             Save Photo
@@ -72,7 +73,7 @@ const WebcamCapture = (props) => {
         {imgSrc && (
           <button
             type="button"
-            className="m-2 bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 border border-blue-700 rounded w-full"
+            className="mt-2 bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-2 border border-orange-700 rounded w-full"
             onClick={cancelPhoto}
           >
             Cancel
