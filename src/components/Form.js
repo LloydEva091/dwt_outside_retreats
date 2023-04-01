@@ -2,13 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { nanoid } from "nanoid";
 import { RetreatContext } from "../context/RetreatContext";
 import ModalView from "./ModalView";
-import WebcamCapture from "./WebcamCapture";
 import { useNavigate } from "react-router-dom";
 
 function Form(props) {
   const { addRetreat, updateRetreat, removeRetreat } =
     useContext(RetreatContext);
-  const [isEdited, setIsEdited] = useState(false);
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -46,13 +44,8 @@ function Form(props) {
       setLat("");
       setLng("");
       props.closeModal();
-      if (props.actionType === "edit") setIsEdited(true);
     }
   }, [isSuccess]);
-
-  useEffect(() => {
-    if (isEdited) navigate("/");
-  }, [isEdited]);
 
   const handleNameChanged = (e) => {
     setName(e.target.value);
@@ -88,31 +81,14 @@ function Form(props) {
     setImage(e.target.files[0]);
   };
 
-  const geoFindMe = () => {
-    function success(position) {
-      setLat(position.coords.latitude);
-      setLng(position.coords.longitude);
-    }
-    function error() {
-      console.log("Unable to retrieve your location");
-    }
-    if (!navigator.geolocation) {
-      console.log("Geolocation is not supported by your browser");
-    } else {
-      console.log("Locating...");
-      navigator.geolocation.getCurrentPosition(success, error);
-    }
-  };
-
-  const canSave = [name, address, mobile, description, lat, lng, image].every(
-    Boolean
-  );
-
   const handleDelete = async (id) => {
     try {
-      await removeRetreat(id);
+      const wasRemoved = await removeRetreat(id);
       setIsSuccess(true);
-      console.log(isSuccess);
+      if (!wasRemoved) {
+        // Retreat was not found, redirect to home page
+        navigate("/");
+      }
       return true;
     } catch (error) {
       console.error("Error deleting retreat:", error);
@@ -154,6 +130,26 @@ function Form(props) {
     }
   };
 
+  const geoFindMe = () => {
+    function success(position) {
+      setLat(position.coords.latitude);
+      setLng(position.coords.longitude);
+    }
+    function error() {
+      console.log("Unable to retrieve your location");
+    }
+    if (!navigator.geolocation) {
+      console.log("Geolocation is not supported by your browser");
+    } else {
+      console.log("Locating...");
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+  };
+
+  const canSave = [name, address, mobile, description, lat, lng, image].every(
+    Boolean
+  );
+
   const getLocationTemplate = (
     <>
       <div>
@@ -161,7 +157,7 @@ function Form(props) {
           Latitude
         </label>
         <input
-          type="text"
+          type="number"
           id="retreat-latitude"
           className="mt-2 w-full rounded-xl py-2 px-2 text-black"
           name="text"
@@ -174,7 +170,7 @@ function Form(props) {
           Longitude
         </label>
         <input
-          type="text"
+          type="number"
           id="retreat-longitude"
           className="mt-2 w-full rounded-xl py-2 px-2 text-black"
           name="text"
@@ -186,6 +182,7 @@ function Form(props) {
       </div>
     </>
   );
+  
   const locationDisplayTemplate = (
     <>
       <div className="grid ">
@@ -193,7 +190,7 @@ function Form(props) {
           Latitude
         </label>
         <span
-          type="text"
+          type="number"
           id="retreat-latitude2"
           className="mt-2 w-full rounded-xl py-2 px-2 text-black bg-white"
           value={lat}
@@ -205,7 +202,7 @@ function Form(props) {
           Longitude
         </label>
         <span
-          type="text"
+          type="number"
           id="retreat-longitude2"
           className="mt-2 w-full rounded-xl py-2 px-2 text-black bg-white"
           value={lng}

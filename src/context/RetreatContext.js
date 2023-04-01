@@ -35,7 +35,6 @@ const RetreatProvider = ({ children }) => {
 
 
   const updateRetreat = (obj) => {
-    // console.log("update ITEM", obj);
     const updatedRetreat = {
       id: obj.id,
       name: obj.name,
@@ -46,7 +45,6 @@ const RetreatProvider = ({ children }) => {
       image: obj.image,
     };
 
-    // console.log("image to update", obj.image);
     updatePhoto(obj.id, obj.image);
     setRetreats((prevRetreats) =>
       prevRetreats.map((retreat) => {
@@ -57,8 +55,6 @@ const RetreatProvider = ({ children }) => {
         }
       })
     );
-    // props.setIsEdited(true)
-    // console.log("should be updated", retreats);
   };
 
   const removeRetreat = (id) => {
@@ -67,8 +63,6 @@ const RetreatProvider = ({ children }) => {
     setRetreats((prevRetreats) =>
       prevRetreats.filter((item) => item.id !== id)
     );
-    // props.setIsEdited(true)
-    // console.log("new retreat list", retreats);
   };
 
   // Render the RetreatContext.Provider with the value of retreats and setRetreats as its value prop, and pass the children prop to it

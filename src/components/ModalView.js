@@ -7,8 +7,11 @@ const ModalView = (props) => {
   let [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
-
-  const btnStyle = props.actionType === "add" || props.actionType === "edit" ? "bg-orange-600 hover:bg-orange-700 border-orange-700 mb-2" : "bg-blue-500 hover:bg-blue-700 border-blue-700 mt-2";
+  // Alternate Button style depending on action type
+  const btnStyle =
+    props.actionType === "add" || props.actionType === "edit"
+      ? "bg-orange-600 hover:bg-orange-700 border-orange-700 mb-2"
+      : "bg-blue-500 hover:bg-blue-700 border-blue-700 mt-2";
 
   const content = (
     <>
@@ -51,12 +54,20 @@ const ModalView = (props) => {
                         as="h3"
                         className="text-lg font-medium leading-6 text-white"
                       >
-                        {props.actionType==="edit" || props.actionType==="add" ? props?.title : null}
+                        {props.actionType === "edit" ||
+                        props.actionType === "add"
+                          ? props?.title
+                          : null}
                       </Dialog.Title>
                       <div className="mt-2"></div>
 
                       {props.actionType === "camera" ? (
-                        <WebcamCapture id={props?.id} setImage={props?.setImage} image={props?.image} closeModal={closeModal}></WebcamCapture>
+                        <WebcamCapture
+                          id={props?.id}
+                          setImage={props?.setImage}
+                          image={props?.image}
+                          closeModal={closeModal}
+                        ></WebcamCapture>
                       ) : props.actionType === "add" ||
                         props.actionType === "edit" ? (
                         <Form
@@ -65,7 +76,6 @@ const ModalView = (props) => {
                           retreatProp={props?.retreatProp}
                         />
                       ) : null}
-
                       <div>
                         <button
                           type="button"
