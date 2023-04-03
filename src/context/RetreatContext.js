@@ -16,9 +16,9 @@ const RetreatProvider = ({ children }) => {
     localStorage.setItem("retreats", JSON.stringify([...retreats]));
   }, [retreats]);
 
-
+  // Define a function called addRetreat that takes an object parameter
   const addRetreat = (obj) => {
-    console.log(obj.image);
+    // Create a newRetreats object with properties from the obj parameter
     const newRetreats = {
       id: obj.id,
       name: obj.name,
@@ -29,12 +29,15 @@ const RetreatProvider = ({ children }) => {
       image: obj.image,
     };
 
+    // Call the addPhoto function with the id and image properties of the obj parameter
     addPhoto(obj.id, obj.image);
+    // Set the retreats state to a new array that includes the previous retreats plus the newRetreats object
     setRetreats([...retreats, newRetreats]);
   };
 
-
+  // Define a function called updateRetreat that takes an object parameter
   const updateRetreat = (obj) => {
+    // Create an updatedRetreat object with properties from the obj parameter
     const updatedRetreat = {
       id: obj.id,
       name: obj.name,
@@ -45,7 +48,9 @@ const RetreatProvider = ({ children }) => {
       image: obj.image,
     };
 
+    // Call the updatePhoto function with the id and image properties of the obj parameter
     updatePhoto(obj.id, obj.image);
+    // Set the retreats state to a new array that maps the previous retreats and replaces the retreat with matching id with the updatedRetreat object
     setRetreats((prevRetreats) =>
       prevRetreats.map((retreat) => {
         if (retreat.id === obj.id) {
@@ -57,9 +62,12 @@ const RetreatProvider = ({ children }) => {
     );
   };
 
+  // Define a function called removeRetreat that takes an id parameter
   const removeRetreat = (id) => {
     console.log("to delete ID", id);
+    // Call the removePhoto function with the id parameter
     removePhoto(id);
+    // Set the retreats state to a new array that filters out the retreat with matching id
     setRetreats((prevRetreats) =>
       prevRetreats.filter((item) => item.id !== id)
     );

@@ -304,8 +304,8 @@ function Form(props) {
         />
         <label htmlFor="retreat-automatic">Automatic</label>
       </div>
-
       {locateManual ? getLocationTemplate : locationDisplayTemplate}
+
       <div className="grid gap-2 sm:grid-cols-2 w-full ">
         <ModalView
           actionType={"camera"}

@@ -37,10 +37,10 @@ const Retreats = () => {
         retreatProp={retreat}
       ></ModalView>
       <div className="w-full h-full bg-white rounded-2xl m-2 text-gray-500">
+        {/* Body Section */}
         <div className="h-64">
           <DisplayPhoto id={retreatID.id} heightImg={"h-full"} />
         </div>
-        {/* Body Section */}
         <div className="pt-3 flex items-center justify-between">
           <h1 className="px-2 text-2xl uppercase w-full font-bold">
             {retreat.name}

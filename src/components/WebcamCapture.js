@@ -86,10 +86,6 @@ const WebcamCapture = (props) => {
 
 export default WebcamCapture;
 
-// A data URI is a URI scheme that allows you to include data, such as images or files, inline in web pages as if they were external resources.
-// In this case, the data URI contains the image data that was captured by the user's device camera.
-// A Blob object represents a file-like object of immutable, raw data. The dataURItoBlob function takes a data URI string as input,
-// extracts the image data and its MIME type, converts the image data to an array of bytes, and creates a new Blob object from the array of bytes and the MIME type.
 function dataURItoBlob(dataURI) {
   // Split the data URI into the data and metadata portions.
   const splitDataURI = dataURI.split(",");

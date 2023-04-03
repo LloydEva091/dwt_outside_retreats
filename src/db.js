@@ -1,4 +1,3 @@
-// db.js
 import Dexie from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 
@@ -26,6 +25,7 @@ async function addPhoto(id, file) {
     reader.readAsDataURL(file);
   } catch (error) {
     console.log(`Failed to add photo: ${error}`);
+    throw new Error("Failed to add photo from database");
   }
 }
 
@@ -42,12 +42,10 @@ async function updatePhoto(id, file) {
       console.log("File is the same as existing photo. No update needed.");
       return;
     }
-
     // Delete the previous photo with the given id
     if (existingPhoto) {
       await db.photos.where("id").equals(id).delete();
     }
-
     const reader = new FileReader();
     reader.onload = async () => {
       const imgSrc = reader.result;
@@ -63,9 +61,9 @@ async function updatePhoto(id, file) {
     reader.readAsDataURL(file);
   } catch (error) {
     console.log(`Failed to update photo: ${error}`);
+    throw new Error("Failed to update photo from database");
   }
 }
-
 async function removePhoto(id) {
   console.log("removePhoto", id);
   try {
@@ -74,11 +72,17 @@ async function removePhoto(id) {
     console.log(`Photo ${id} successfully removed.`);
   } catch (error) {
     console.log(`Failed to remove photo: ${error}`);
+    throw new Error("Failed to remove photo from database");
   }
 }
-
-export function getPhoto(id) {
-  return db.photos.get(id);
+async function getPhoto(id) {
+  try {
+    const photo = await db.photos.get(id);
+    return photo;
+  } catch (error) {
+    console.error("Error fetching photo:", error);
+    throw new Error("Failed to get photo from database");
+  }
 }
 
 function GetPhotoSrc(id) {
@@ -90,10 +94,9 @@ function GetPhotoSrc(id) {
 
   // Check if the retrieved image is valid, and return the image source if so.
   if (Array.isArray(img) && img.length > 0) {
-    // console.log(img[0].imgSrc)
     return img[0].imgSrc;
   } else {
     return null; // Return null if the image is not found or invalid
   }
 }
-export { addPhoto, GetPhotoSrc, updatePhoto, removePhoto };
+export { getPhoto, addPhoto, GetPhotoSrc, updatePhoto, removePhoto };

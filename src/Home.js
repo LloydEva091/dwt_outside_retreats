@@ -7,6 +7,7 @@ function Home() {
   // Retrieve retreats from the RetreatContext
   const { retreats } = useContext(RetreatContext);
   const [numDisplayedCards, setNumDisplayedCards] = useState(4); // Default to 4 for small screens
+  
   // Update number of cards to display based on screen size
   // Re-run effect when retreats array changes
   useEffect(() => {
@@ -20,12 +21,9 @@ function Home() {
         setNumDisplayedCards(retreats.length);
       }
     };
-    // Listen for resize events
-    window.addEventListener("resize", handleResize);
-    // Call the function immediately to set initial state
-    handleResize();
-    // Clean up by removing the event listener
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize); // Listen for resize events
+    handleResize(); // Call the function immediately to set initial state
+    return () => window.removeEventListener("resize", handleResize); // Clean up by removing the event listener
   }, [retreats]);
 
   // Show a "Show More" button if there are more retreats than displayed cards
